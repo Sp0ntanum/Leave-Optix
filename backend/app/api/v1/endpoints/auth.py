@@ -1,0 +1,141 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from supabase import Client
+from app.core.database import get_db
+from app.core.security import get_current_user
+from app.schemas.auth import LoginRequest, SignupRequest, TokenResponse, UserResponse
+import logging
+
+logger = logging.getLogger(__name__)
+router = APIRouter()
+
+
+@router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def signup(
+    signup_data: SignupRequest,
+    db: Client = Depends(get_db)
+):
+    """Register a new user"""
+    try:
+        response = db.auth.sign_up({
+            "email": signup_data.email,
+            "password": signup_data.password,
+            "options": {
+                "data": {
+                    "full_name": signup_data.full_name,
+                    "role": signup_data.role or "employee"
+                }
+            }
+        })
+        
+        if response.user:
+            return UserResponse(
+                id=response.user.id,
+                email=response.user.email,
+                full_name=signup_data.full_name,
+                role=signup_data.role or "employee"
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Failed to create user"
+            )
+    except Exception as e:
+        logger.error(f"Signup error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+
+
+@router.post("/login", response_model=TokenResponse)
+async def login(
+    login_data: LoginRequest,
+    db: Client = Depends(get_db)
+):
+    """Authenticate user and return tokens"""
+    try:
+        response = db.auth.sign_in_with_password({
+            "email": login_data.email,
+            "password": login_data.password
+        })
+        
+        if response.session:
+            return TokenResponse(
+                access_token=response.session.access_token,
+                refresh_token=response.session.refresh_token,
+                token_type="bearer",
+                expires_in=response.session.expires_in
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid credentials"
+            )
+    except Exception as e:
+        logger.error(f"Login error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials"
+        )
+
+
+@router.post("/refresh", response_model=TokenResponse)
+async def refresh_token(
+    refresh_token: str,
+    db: Client = Depends(get_db)
+):
+    """Refresh access token"""
+    try:
+        response = db.auth.refresh_session(refresh_token)
+        
+        if response.session:
+            return TokenResponse(
+                access_token=response.session.access_token,
+                refresh_token=response.session.refresh_token,
+                token_type="bearer",
+                expires_in=response.session.expires_in
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid refresh token"
+            )
+    except Exception as e:
+        logger.error(f"Token refresh error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token"
+        )
+
+
+@router.post("/logout")
+async def logout(
+    current_user: dict = Depends(get_current_user),
+    db: Client = Depends(get_db)
+):
+    """Logout current user"""
+    try:
+        db.auth.sign_out()
+        return {"message": "Successfully logged out"}
+    except Exception as e:
+        logger.error(f"Logout error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Logout failed"
+        )
+
+
+@router.get("/me", response_model=UserResponse)
+async def get_current_user_info(
+    current_user: dict = Depends(get_current_user),
+    db: Client = Depends(get_db)
+):
+    """Get current user information"""
+    user_metadata = current_user.get("user_metadata", {})
+    
+    return UserResponse(
+        id=current_user["id"],
+        email=current_user["email"],
+        full_name=user_metadata.get("full_name", ""),
+        role=user_metadata.get("role", "employee")
+    )
