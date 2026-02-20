@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def signup(
+def signup(
     signup_data: SignupRequest,
     db: Client = Depends(get_db)
 ):
@@ -37,18 +37,20 @@ async def signup(
         else:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Failed to create user"
+                detail="Failed to create user account"
             )
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Signup error: {e}")
+        logger.error(f"Signup error for email: {signup_data.email}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            detail="Unable to create account"
         )
 
 
 @router.post("/login", response_model=TokenResponse)
-async def login(
+def login(
     login_data: LoginRequest,
     db: Client = Depends(get_db)
 ):
@@ -71,8 +73,10 @@ async def login(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid credentials"
             )
-    except Exception as e:
-        logger.error(f"Login error: {e}")
+    except HTTPException:
+        raise
+    except Exception:
+        logger.warning(f"Login attempt failed for email: {login_data.email}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials"
@@ -80,7 +84,7 @@ async def login(
 
 
 @router.post("/refresh", response_model=TokenResponse)
-async def refresh_token(
+def refresh_token(
     refresh_token: str,
     db: Client = Depends(get_db)
 ):
@@ -100,8 +104,10 @@ async def refresh_token(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid refresh token"
             )
-    except Exception as e:
-        logger.error(f"Token refresh error: {e}")
+    except HTTPException:
+        raise
+    except Exception:
+        logger.warning("Token refresh failed")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid refresh token"
@@ -109,7 +115,7 @@ async def refresh_token(
 
 
 @router.post("/logout")
-async def logout(
+def logout(
     current_user: dict = Depends(get_current_user),
     db: Client = Depends(get_db)
 ):
@@ -117,8 +123,8 @@ async def logout(
     try:
         db.auth.sign_out()
         return {"message": "Successfully logged out"}
-    except Exception as e:
-        logger.error(f"Logout error: {e}")
+    except Exception:
+        logger.warning(f"Logout failed for user: {current_user.get('id')}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Logout failed"
@@ -126,9 +132,8 @@ async def logout(
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_current_user_info(
-    current_user: dict = Depends(get_current_user),
-    db: Client = Depends(get_db)
+def get_current_user_info(
+    current_user: dict = Depends(get_current_user)
 ):
     """Get current user information"""
     user_metadata = current_user.get("user_metadata", {})

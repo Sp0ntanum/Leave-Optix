@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from pydantic import field_validator, HttpUrl
 from typing import List
 from functools import lru_cache
 
@@ -11,13 +12,10 @@ class Settings(BaseSettings):
     
     # Environment
     ENVIRONMENT: str = "development"
-    DEBUG: bool = True
+    DEBUG: bool = False  # Secure default
     
     # CORS
-    ALLOWED_ORIGINS: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:5173",
-    ]
+    ALLOWED_ORIGINS: List[str]
     
     # Supabase
     SUPABASE_URL: str
@@ -57,6 +55,17 @@ class Settings(BaseSettings):
     DEFAULT_LEAVE_BALANCE_DAYS: int = 20
     MAX_ADVANCE_BOOKING_DAYS: int = 365
     MIN_ADVANCE_NOTICE_DAYS: int = 7
+    
+    @field_validator('ALLOWED_ORIGINS')
+    @classmethod
+    def validate_origins(cls, v):
+        if not v:
+            raise ValueError("ALLOWED_ORIGINS cannot be empty")
+        return v
+    
+    @property
+    def is_production(self) -> bool:
+        return self.ENVIRONMENT == "production"
     
     class Config:
         env_file = ".env"
