@@ -29,21 +29,28 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   })
 
-  const useDemoAccount = async () => {
+  const useDemoAccount = async (role: 'employee' | 'manager') => {
     setDemoMode(true)
     setIsLoading(true)
     try {
-      const response = await authService.login({
-        email: 'manager@demo.com',
-        password: 'demo123'
-      })
+      const credentials = role === 'manager' 
+        ? { email: 'manager@company.com', password: 'password' }
+        : { email: 'employee@company.com', password: 'password' }
+      
+      const response = await authService.login(credentials)
       setAccessToken(response.access_token)
       
       const user = await authService.getCurrentUser()
       setUser(user)
       
-      toast.success('Demo login successful!')
-      navigate('/')
+      toast.success(`Demo ${role} login successful!`)
+      
+      // Route based on role
+      if (user.role === 'manager' || user.role === 'admin') {
+        navigate('/manager/dashboard')
+      } else {
+        navigate('/employee/dashboard')
+      }
     } catch (error: any) {
       toast.error('Demo account not available. Please contact admin.')
     } finally {
@@ -62,7 +69,13 @@ export default function Login() {
       setUser(user)
       
       toast.success('Login successful!')
-      navigate('/')
+      
+      // Route based on role
+      if (user.role === 'manager' || user.role === 'admin') {
+        navigate('/manager/dashboard')
+      } else {
+        navigate('/employee/dashboard')
+      }
     } catch (error: any) {
       toast.error(error.response?.data?.detail || 'Login failed')
     } finally {
@@ -114,14 +127,23 @@ export default function Login() {
         </button>
       </form>
 
-      <div className="mt-4">
+      <div className="mt-4 space-y-2">
         <button
           type="button"
-          onClick={useDemoAccount}
+          onClick={() => useDemoAccount('manager')}
           disabled={isLoading}
-          className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-4 py-2 bg-gradient-to-r from-primary-600 to-accent-600 text-white rounded-lg hover:from-primary-700 hover:to-accent-700 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed font-medium"
         >
-          {demoMode ? 'Logging in...' : 'Use Demo Account (Manager)'}
+          {demoMode ? 'Logging in...' : '🎯 Demo Manager Login'}
+        </button>
+        
+        <button
+          type="button"
+          onClick={() => useDemoAccount('employee')}
+          disabled={isLoading}
+          className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+        >
+          {demoMode ? 'Logging in...' : '👤 Demo Employee Login'}
         </button>
       </div>
 

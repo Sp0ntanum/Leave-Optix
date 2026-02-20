@@ -31,44 +31,63 @@ import { DashboardProvider } from '@/context/DashboardContext'
 import { useAuthStore } from '@/store/authStore'
 
 function App() {
-  const { user, setUser } = useAuthStore()
+  const { user } = useAuthStore()
 
-  // Auto-login demo user
-  if (!user) {
-    setUser({
-      id: 'demo_user',
-      email: 'manager@demo.com',
-      full_name: 'Demo Manager',
-      role: 'manager'
-    })
+  // Role-based default dashboard route
+  const getDefaultRoute = () => {
+    if (!user) return '/login'
+    return user.role === 'manager' || user.role === 'admin' 
+      ? '/manager/dashboard' 
+      : '/employee/dashboard'
   }
 
   return (
     <DashboardProvider>
       <Routes>
-        {/* All routes accessible without login */}
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Navigate to="/manager/dashboard" replace />} />
-          <Route path="/leave/requests" element={<LeaveRequests />} />
-          <Route path="/leave/new" element={<CreateLeaveRequest />} />
-          <Route path="/calendar" element={<TeamCalendar />} />
-          <Route path="/approvals" element={<Approvals />} />
-          <Route path="/workload" element={<WorkloadAnalysis />} />
-          <Route path="/skill-coverage" element={<SkillCoveragePage />} />
-          <Route path="/burnout-risk" element={<BurnoutRiskPage />} />
-          <Route path="/workforce-ai" element={<WorkforceAI />} />
-          <Route path="/manager/dashboard" element={<ManagerDashboard />} />
-          <Route path="/manager/approvals" element={<ManagerApprovals />} />
-          <Route path="/manager/workload" element={<WorkloadVisualization />} />
-          <Route path="/rules" element={<AutoApprovalRules />} />
-          <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
-          <Route path="/employee/apply-leave" element={<ApplyLeave />} />
-          <Route path="/employee/leave-history" element={<LeaveHistory />} />
-          <Route path="/employee/team-calendar" element={<EmployeeTeamCalendar />} />
+        {/* Auth Routes (F1 - Login System) */}
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         </Route>
 
+        {/* Protected Routes - Require Authentication */}
+        {user ? (
+          <Route element={<MainLayout />}>
+            {/* Root redirects based on role */}
+            <Route path="/" element={<Navigate to={getDefaultRoute()} replace />} />
+            
+            {/* Manager Dashboard Routes (F3 - Manager Dashboard) */}
+            {(user.role === 'manager' || user.role === 'admin') && (
+              <>
+                <Route path="/manager/dashboard" element={<ManagerDashboard />} />
+                <Route path="/manager/approvals" element={<ManagerApprovals />} />
+                <Route path="/manager/workload" element={<WorkloadVisualization />} />
+                <Route path="/approvals" element={<Approvals />} />
+                <Route path="/workload" element={<WorkloadAnalysis />} />
+                <Route path="/skill-coverage" element={<SkillCoveragePage />} />
+                <Route path="/burnout-risk" element={<BurnoutRiskPage />} />
+                <Route path="/workforce-ai" element={<WorkforceAI />} />
+                <Route path="/rules" element={<AutoApprovalRules />} />
+              </>
+            )}
+            
+            {/* Employee Dashboard Routes (F2 - Employee Dashboard) */}
+            <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
+            <Route path="/employee/apply-leave" element={<ApplyLeave />} />
+            <Route path="/employee/leave-history" element={<LeaveHistory />} />
+            <Route path="/employee/team-calendar" element={<EmployeeTeamCalendar />} />
+            
+            {/* Common Routes - Available to all authenticated users */}
+            <Route path="/leave/requests" element={<LeaveRequests />} />
+            <Route path="/leave/new" element={<CreateLeaveRequest />} />
+            <Route path="/calendar" element={<TeamCalendar />} />
+          </Route>
+        ) : (
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        )}
+
         {/* Fallback */}
-        <Route path="*" element={<Navigate to="/manager/dashboard" replace />} />
+        <Route path="*" element={<Navigate to={getDefaultRoute()} replace />} />
       </Routes>
 
       <ToastContainer
