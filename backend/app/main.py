@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    logger.info("Starting up Workload360 API...")
+    logger.info("Starting up Leave-Optix API...")
     try:
         db = SupabaseClient.get_client()
         logger.info("✓ Database connected")
@@ -35,14 +35,14 @@ async def lifespan(app: FastAPI):
     yield
     
     # Shutdown
-    logger.info("Shutting down Workload360 API...")
+    logger.info("Shutting down Leave-Optix API...")
     logger.info("Shutdown complete")
 
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="Workload360 - Intelligent Leave & Workforce Optimization System",
+    description="Leave-Optix - Intelligent Leave & Workforce Optimization System",
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     lifespan=lifespan
 )
@@ -51,7 +51,7 @@ app = FastAPI(
 if settings.is_production:
     app.add_middleware(
         TrustedHostMiddleware,
-        allowed_hosts=["*.workload360.com", "workload360.com"]
+        allowed_hosts=["*.leave-optix.com", "leave-optix.com"]
     )
 
 # Security: CORS (environment-driven)
@@ -86,7 +86,7 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 @app.get("/")
 def root():
     return {
-        "message": "Welcome to Workload360 API",
+        "message": "Welcome to Leave-Optix API",
         "version": settings.VERSION,
         "docs": f"{settings.API_V1_STR}/docs"
     }

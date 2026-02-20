@@ -52,7 +52,7 @@ SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
 SMTP_PASSWORD=your-app-password
-SMTP_FROM_EMAIL=noreply@workload360.com
+SMTP_FROM_EMAIL=noreply@leave-optix.com
 ```
 
 ### 3. Frontend Environment Variables
@@ -173,11 +173,11 @@ docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/workload360-frontend:la
 
 ```bash
 # Create resource group
-az group create --name workload360-rg --location eastus
+az group create --name leave-optix-rg --location eastus
 
 # Create container instances
 az container create \
-  --resource-group workload360-rg \
+  --resource-group leave-optix-rg \
   --name workload360-backend \
   --image workload360-backend:latest \
   --dns-name-label workload360-api \

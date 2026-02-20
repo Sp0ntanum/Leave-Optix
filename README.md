@@ -14,7 +14,7 @@ A comprehensive leave management and workforce optimization platform built with 
 ## 📁 Project Structure
 
 ```
-workload360/
+leave-optix/
 ├── frontend/          # React frontend application
 ├── backend/           # FastAPI backend application
 ├── database/          # Database schemas and migrations
