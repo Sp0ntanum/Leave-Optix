@@ -11,7 +11,7 @@ from app.api.v1.endpoints import (
     dashboard,
     rules,
     manager,
-    intelligence
+    # intelligence  # Commented out - requires SQLAlchemy
 )
 
 api_router = APIRouter()
@@ -29,4 +29,4 @@ api_router.include_router(notifications.router, prefix="/notifications", tags=["
 api_router.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
 api_router.include_router(rules.router, prefix="/rules", tags=["Auto-Approval Rules"])
 api_router.include_router(manager.router, prefix="/manager", tags=["Manager"])
-api_router.include_router(intelligence.router, prefix="/manager", tags=["Intelligence"])
+# api_router.include_router(intelligence.router, prefix="/manager", tags=["Intelligence"])  # Commented out

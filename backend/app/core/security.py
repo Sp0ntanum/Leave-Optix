@@ -4,11 +4,19 @@ from jose import JWTError, jwt
 from supabase import create_client, Client
 from app.core.config import settings
 from typing import Optional
+from enum import Enum
 import logging
 
 logger = logging.getLogger(__name__)
 
 security = HTTPBearer()
+
+
+class UserRole(str, Enum):
+    """User role enumeration"""
+    EMPLOYEE = "employee"
+    MANAGER = "manager"
+    ADMIN = "admin"
 
 
 def get_supabase_client() -> Client:
@@ -71,18 +79,18 @@ async def get_current_active_user(
     return current_user
 
 
-def require_role(required_role: str):
+def require_role(required_role: UserRole):
     """
     Dependency to check if user has required role
-    Usage: dependencies=[Depends(require_role("manager"))]
+    Usage: dependencies=[Depends(require_role(UserRole.MANAGER))]
     """
     async def role_checker(current_user: dict = Depends(get_current_user)) -> dict:
         user_role = current_user.get("user_metadata", {}).get("role", "employee")
         
-        if user_role != required_role and user_role != "admin":
+        if user_role != required_role.value and user_role != UserRole.ADMIN.value:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Required role: {required_role}"
+                detail=f"Required role: {required_role.value}"
             )
         return current_user
     
