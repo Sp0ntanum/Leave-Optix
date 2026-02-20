@@ -1,4 +1,4 @@
-# Workload360 - Intelligent Leave & Workforce Optimization System
+# Leave-Optix - Intelligent Leave & Workforce Optimization System
 
 A comprehensive leave management and workforce optimization platform built with modern technologies.
 
