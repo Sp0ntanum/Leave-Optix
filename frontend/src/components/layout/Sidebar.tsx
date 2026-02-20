@@ -33,7 +33,7 @@ export default function Sidebar() {
     <aside className="w-64 bg-white border-r border-gray-200">
       <div className="h-full flex flex-col">
         <div className="p-6">
-          <h1 className="text-2xl font-bold text-primary-600">Workload360</h1>
+          <h1 className="text-2xl font-bold text-primary-600">Leave-Optix</h1>
         </div>
 
         <nav className="flex-1 px-4 space-y-1">

@@ -9,7 +9,7 @@ export const config = {
     anonKey: SUPABASE_ANON_KEY,
   },
   app: {
-    name: import.meta.env.VITE_APP_NAME || 'Workload360',
+    name: import.meta.env.VITE_APP_NAME || 'Leave-Optix',
     version: import.meta.env.VITE_APP_VERSION || '1.0.0',
   },
 }

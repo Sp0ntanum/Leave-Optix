@@ -1,9 +1,9 @@
-# API Documentation - Workload360
+# API Documentation - Leave-Optix
 
 ## Base URL
 ```
 Development: http://localhost:8000/api/v1
-Production: https://api.workload360.com/api/v1
+Production: https://api.leave-optix.com/api/v1
 ```
 
 ## Authentication

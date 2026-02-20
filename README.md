@@ -14,7 +14,7 @@ A comprehensive leave management and workforce optimization platform built with 
 ## 📁 Project Structure
 
 ```
-workload360/
+leave-optix/
 ├── frontend/          # React frontend application
 ├── backend/           # FastAPI backend application
 ├── database/          # Database schemas and migrations
@@ -67,12 +67,13 @@ workload360/
 ### Environment Setup
 
 1. Clone the repository
-2. Copy environment files:
+2. Configure `.env` files with your Supabase credentials:
    ```bash
-   cp frontend/.env.example frontend/.env
-   cp backend/.env.example backend/.env
+   backend/.env
+   frontend/.env
+   .env (root)
    ```
-3. Configure your Supabase credentials in `.env` files
+3. Update the files with your actual Supabase URL, keys, and database connection string
 
 ### Running with Docker
 
@@ -106,7 +107,6 @@ npm run dev
 
 - [API Documentation](./docs/API.md)
 - [Database Schema](./docs/DATABASE.md)
-- [Deployment Guide](./docs/DEPLOYMENT.md)
 - [Architecture Overview](./docs/ARCHITECTURE.md)
 
 ## 🧪 Testing
@@ -124,8 +124,6 @@ npm test
 ```
 
 ## 🚀 Deployment
-
-See [Deployment Guide](./docs/DEPLOYMENT.md) for detailed instructions.
 
 ## 📝 License
 

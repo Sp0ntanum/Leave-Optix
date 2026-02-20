@@ -1,4 +1,4 @@
--- Workload360 Database Schema - Migration Script
+-- Leave-Optix Database Schema - Migration Script
 -- Supabase PostgreSQL
 
 -- Enable UUID extension
