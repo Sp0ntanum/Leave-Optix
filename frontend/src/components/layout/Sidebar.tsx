@@ -30,7 +30,7 @@ export default function Sidebar() {
   const isActive = (path: string) => location.pathname === path
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200">
+    <aside className="w-64 bg-black border-r border-gray-800">
       <div className="h-full flex flex-col">
         <div className="p-6">
           <h1 className="text-2xl font-bold text-primary-600">Leave-Optix</h1>
@@ -43,8 +43,8 @@ export default function Sidebar() {
               to={item.href}
               className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                 isActive(item.href)
-                  ? 'bg-primary-50 text-primary-600'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  ? 'bg-white text-black'
+                  : 'text-gray-300 hover:bg-gray-900 hover:text-white'
               }`}
             >
               <item.icon className="mr-3 h-5 w-5" />
@@ -55,7 +55,7 @@ export default function Sidebar() {
           {(user?.role === 'manager' || user?.role === 'admin') && (
             <>
               <div className="pt-6 pb-2">
-                <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                <p className="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Manager Tools
                 </p>
               </div>
@@ -65,8 +65,8 @@ export default function Sidebar() {
                   to={item.href}
                   className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                     isActive(item.href)
-                      ? 'bg-primary-50 text-primary-600'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      ? 'bg-white text-black'
+                      : 'text-gray-300 hover:bg-gray-900 hover:text-white'
                   }`}
                 >
                   <item.icon className="mr-3 h-5 w-5" />
