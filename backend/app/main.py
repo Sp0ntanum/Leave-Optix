@@ -88,7 +88,11 @@ def root():
     return {
         "message": "Welcome to Leave-Optix API",
         "version": settings.VERSION,
-        "docs": f"{settings.API_V1_STR}/docs"
+        "docs": f"{settings.API_V1_STR}/docs",
+        "demo_login": {
+            "email": "manager@demo.com",
+            "password": "demo123"
+        }
     }
 
 

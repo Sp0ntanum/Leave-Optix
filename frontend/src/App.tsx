@@ -19,31 +19,36 @@ import WorkforceAI from '@/pages/workload/WorkforceAI'
 import SkillCoveragePage from '@/pages/workload/SkillCoveragePage'
 import BurnoutRiskPage from '@/pages/workload/BurnoutRiskPage'
 import ManagerDashboard from '@/pages/manager/ManagerDashboard'
+import ManagerApprovals from '@/pages/manager/Approvals'
+import WorkloadVisualization from '@/pages/manager/WorkloadVisualization'
 import AutoApprovalRules from '@/pages/rules/AutoApprovalRules'
 import { EmployeeDashboard, ApplyLeave, LeaveHistory, TeamCalendar as EmployeeTeamCalendar } from '@/pages/employee'
+
+// Context
+import { DashboardProvider } from '@/context/DashboardContext'
 
 // Hooks
 import { useAuthStore } from '@/store/authStore'
 
 function App() {
-  const { user } = useAuthStore()
+  const { user, setUser } = useAuthStore()
+
+  // Auto-login demo user
+  if (!user) {
+    setUser({
+      id: 'demo_user',
+      email: 'manager@demo.com',
+      full_name: 'Demo Manager',
+      role: 'manager'
+    })
+  }
 
   return (
-    <>
+    <DashboardProvider>
       <Routes>
-        {/* Public Routes */}
-        <Route element={<AuthLayout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-        </Route>
-
-        {/* Protected Routes */}
-        <Route
-          element={
-            user ? <MainLayout /> : <Navigate to="/login" replace />
-          }
-        >
-          <Route path="/" element={<Dashboard />} />
+        {/* All routes accessible without login */}
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Navigate to="/manager/dashboard" replace />} />
           <Route path="/leave/requests" element={<LeaveRequests />} />
           <Route path="/leave/new" element={<CreateLeaveRequest />} />
           <Route path="/calendar" element={<TeamCalendar />} />
@@ -53,6 +58,8 @@ function App() {
           <Route path="/burnout-risk" element={<BurnoutRiskPage />} />
           <Route path="/workforce-ai" element={<WorkforceAI />} />
           <Route path="/manager/dashboard" element={<ManagerDashboard />} />
+          <Route path="/manager/approvals" element={<ManagerApprovals />} />
+          <Route path="/manager/workload" element={<WorkloadVisualization />} />
           <Route path="/rules" element={<AutoApprovalRules />} />
           <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
           <Route path="/employee/apply-leave" element={<ApplyLeave />} />
@@ -61,7 +68,7 @@ function App() {
         </Route>
 
         {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/manager/dashboard" replace />} />
       </Routes>
 
       <ToastContainer
@@ -75,7 +82,7 @@ function App() {
         draggable
         pauseOnHover
       />
-    </>
+    </DashboardProvider>
   )
 }
 
