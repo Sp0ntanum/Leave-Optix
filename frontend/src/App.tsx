@@ -15,8 +15,12 @@ import CreateLeaveRequest from '@/pages/leave/CreateLeaveRequest'
 import TeamCalendar from '@/pages/calendar/TeamCalendar'
 import Approvals from '@/pages/approvals/Approvals'
 import WorkloadAnalysis from '@/pages/workload/WorkloadAnalysis'
+import WorkforceAI from '@/pages/workload/WorkforceAI'
+import SkillCoveragePage from '@/pages/workload/SkillCoveragePage'
+import BurnoutRiskPage from '@/pages/workload/BurnoutRiskPage'
 import ManagerDashboard from '@/pages/manager/ManagerDashboard'
 import AutoApprovalRules from '@/pages/rules/AutoApprovalRules'
+import { EmployeeDashboard, ApplyLeave, LeaveHistory, TeamCalendar as EmployeeTeamCalendar } from '@/pages/employee'
 
 // Hooks
 import { useAuthStore } from '@/store/authStore'
@@ -45,8 +49,15 @@ function App() {
           <Route path="/calendar" element={<TeamCalendar />} />
           <Route path="/approvals" element={<Approvals />} />
           <Route path="/workload" element={<WorkloadAnalysis />} />
+          <Route path="/skill-coverage" element={<SkillCoveragePage />} />
+          <Route path="/burnout-risk" element={<BurnoutRiskPage />} />
+          <Route path="/workforce-ai" element={<WorkforceAI />} />
           <Route path="/manager/dashboard" element={<ManagerDashboard />} />
           <Route path="/rules" element={<AutoApprovalRules />} />
+          <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
+          <Route path="/employee/apply-leave" element={<ApplyLeave />} />
+          <Route path="/employee/leave-history" element={<LeaveHistory />} />
+          <Route path="/employee/team-calendar" element={<EmployeeTeamCalendar />} />
         </Route>
 
         {/* Fallback */}
