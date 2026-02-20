@@ -53,6 +53,22 @@ async def login(
     db: Client = Depends(get_db)
 ):
     """Authenticate user and return tokens"""
+    # Demo account bypass
+    if login_data.email == "manager@demo.com" and login_data.password == "demo123":
+        return TokenResponse(
+            access_token="demo_token_manager_12345",
+            refresh_token="demo_refresh_token",
+            token_type="bearer",
+            expires_in=3600
+        )
+    
+    # Skip Supabase if not configured
+    if not db:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database not configured. Use demo account."
+        )
+    
     try:
         response = db.auth.sign_in_with_password({
             "email": login_data.email,
@@ -131,6 +147,15 @@ async def get_current_user_info(
     db: Client = Depends(get_db)
 ):
     """Get current user information"""
+    # Demo account bypass
+    if current_user.get("email") == "demo" or current_user.get("id") == "demo":
+        return UserResponse(
+            id="demo_user_id",
+            email="manager@demo.com",
+            full_name="Demo Manager",
+            role="manager"
+        )
+    
     user_metadata = current_user.get("user_metadata", {})
     
     return UserResponse(

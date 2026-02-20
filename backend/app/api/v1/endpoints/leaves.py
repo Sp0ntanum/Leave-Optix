@@ -90,6 +90,18 @@ async def cancel_leave_request(
     return None
 
 
+@router.put("/update/{leave_id}")
+async def update_leave_status(
+    leave_id: int,
+    status_data: dict,
+    current_user: dict = Depends(get_current_user),
+    db: Client = Depends(get_db)
+):
+    """Update leave request status (for managers)"""
+    # Mock response for demo
+    return {"message": f"Leave request {leave_id} updated to {status_data.get('status')}"}
+
+
 @router.get("/balance/summary")
 async def get_leave_balance(
     current_user: dict = Depends(get_current_user),

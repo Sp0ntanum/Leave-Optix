@@ -32,7 +32,11 @@ async def root():
     return {
         "message": "Welcome to Workload360 API",
         "version": settings.VERSION,
-        "docs": f"{settings.API_V1_STR}/docs"
+        "docs": f"{settings.API_V1_STR}/docs",
+        "demo_login": {
+            "email": "manager@demo.com",
+            "password": "demo123"
+        }
     }
 
 @app.get("/health")

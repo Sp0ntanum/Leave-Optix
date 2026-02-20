@@ -16,41 +16,48 @@ import TeamCalendar from '@/pages/calendar/TeamCalendar'
 import Approvals from '@/pages/approvals/Approvals'
 import WorkloadAnalysis from '@/pages/workload/WorkloadAnalysis'
 import ManagerDashboard from '@/pages/manager/ManagerDashboard'
+import ManagerApprovals from '@/pages/manager/Approvals'
+import WorkloadVisualization from '@/pages/manager/WorkloadVisualization'
 import AutoApprovalRules from '@/pages/rules/AutoApprovalRules'
+
+// Context
+import { DashboardProvider } from '@/context/DashboardContext'
 
 // Hooks
 import { useAuthStore } from '@/store/authStore'
 
 function App() {
-  const { user } = useAuthStore()
+  const { user, setUser } = useAuthStore()
+
+  // Auto-login demo user
+  if (!user) {
+    setUser({
+      id: 'demo_user',
+      email: 'manager@demo.com',
+      full_name: 'Demo Manager',
+      role: 'manager'
+    })
+  }
 
   return (
-    <>
+    <DashboardProvider>
       <Routes>
-        {/* Public Routes */}
-        <Route element={<AuthLayout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-        </Route>
-
-        {/* Protected Routes */}
-        <Route
-          element={
-            user ? <MainLayout /> : <Navigate to="/login" replace />
-          }
-        >
-          <Route path="/" element={<Dashboard />} />
+        {/* All routes accessible without login */}
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Navigate to="/manager/dashboard" replace />} />
           <Route path="/leave/requests" element={<LeaveRequests />} />
           <Route path="/leave/new" element={<CreateLeaveRequest />} />
           <Route path="/calendar" element={<TeamCalendar />} />
           <Route path="/approvals" element={<Approvals />} />
           <Route path="/workload" element={<WorkloadAnalysis />} />
           <Route path="/manager/dashboard" element={<ManagerDashboard />} />
+          <Route path="/manager/approvals" element={<ManagerApprovals />} />
+          <Route path="/manager/workload" element={<WorkloadVisualization />} />
           <Route path="/rules" element={<AutoApprovalRules />} />
         </Route>
 
         {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/manager/dashboard" replace />} />
       </Routes>
 
       <ToastContainer
@@ -64,7 +71,7 @@ function App() {
         draggable
         pauseOnHover
       />
-    </>
+    </DashboardProvider>
   )
 }
 

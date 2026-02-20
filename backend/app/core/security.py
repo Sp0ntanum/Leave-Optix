@@ -32,6 +32,21 @@ async def get_current_user(
     try:
         token = credentials.credentials
         
+        # Demo account bypass
+        if token == "demo_token_manager_12345":
+            return {
+                "id": "demo",
+                "email": "demo",
+                "user_metadata": {
+                    "full_name": "Demo Manager",
+                    "role": "manager"
+                }
+            }
+        
+        # Skip Supabase if not configured
+        if not supabase:
+            raise credentials_exception
+        
         # Verify token with Supabase
         user = supabase.auth.get_user(token)
         

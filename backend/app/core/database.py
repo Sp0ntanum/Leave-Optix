@@ -13,20 +13,27 @@ class SupabaseClient:
     def get_client(cls) -> Client:
         """Get or create Supabase client singleton"""
         if cls._instance is None:
-            cls._instance = create_client(
-                settings.SUPABASE_URL,
-                settings.SUPABASE_KEY
-            )
-            logger.info("Supabase client initialized")
+            try:
+                cls._instance = create_client(
+                    settings.SUPABASE_URL,
+                    settings.SUPABASE_KEY
+                )
+                logger.info("Supabase client initialized")
+            except Exception as e:
+                logger.warning(f"Supabase not configured: {e}")
+                cls._instance = None
         return cls._instance
     
     @classmethod
     def get_admin_client(cls) -> Client:
         """Get Supabase client with service role key for admin operations"""
-        return create_client(
-            settings.SUPABASE_URL,
-            settings.SUPABASE_SERVICE_KEY
-        )
+        try:
+            return create_client(
+                settings.SUPABASE_URL,
+                settings.SUPABASE_SERVICE_KEY
+            )
+        except:
+            return None
 
 
 def get_db() -> Client:
