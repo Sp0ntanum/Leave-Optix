@@ -28,8 +28,8 @@ export default function Header() {
 
           <div className="flex items-center space-x-3 pl-4 border-l border-gray-200">
             <div className="flex items-center space-x-2">
-              <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
-                <User className="h-4 w-4 text-primary-600" />
+              <div className="h-8 w-8 rounded-full bg-black flex items-center justify-center">
+                <User className="h-4 w-4 text-white" />
               </div>
               <span className="text-sm font-medium text-gray-700">
                 {user?.full_name}
@@ -38,7 +38,7 @@ export default function Header() {
 
             <button
               onClick={handleLogout}
-              className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50"
+              className="p-2 text-gray-400 hover:text-black rounded-lg hover:bg-gray-100"
               title="Logout"
             >
               <LogOut className="h-5 w-5" />
